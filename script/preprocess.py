@@ -26,16 +26,19 @@ def prepare_features(filename, sen_len=100, overlap=20):
     f = codecs.open(filename, "r", "utf-8")
     text = f.read()
     # Make that | become only start of word
-    if (text[0] != "|"): text = "|" + text
-    if (text[-1] == "|"): text = text[:-1]
     stopwords = ["<NE>", "</NE>", "<AB>", "</AB>", "\r\n", ""]
     for word in stopwords:
         text = text.replace(word, "")
+
+    if (text[0] != "|"): text = "|" + text
+    if (text[-1] == "|"): text = text[:-1]
+
+
     isStart = "".join(["1" if c == "|" else "0" for c in text])
     isStart = isStart.replace("10", "1")
     text = text.replace("|", "")
 
-    assert len(text) != len(isStart)
+    assert len(text) == len(isStart)
 
     X = get_overlapped_chunks(text, sen_len, overlap)
     Y = get_overlapped_chunks(isStart, sen_len, overlap)
